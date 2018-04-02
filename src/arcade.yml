@@ -1,0 +1,9 @@
+---
+- hosts: arcade-machines
+  roles:
+  - desktop
+  - autologin
+  - kodi
+  - launcher-kodi
+  - retropie
+

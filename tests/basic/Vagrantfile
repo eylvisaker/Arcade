@@ -1,0 +1,42 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+ip = "192.168.33.10"
+
+open('inventory', 'w') do |file|
+  file.puts "[arcade-machines]"
+  file.puts ip
+end
+
+Vagrant.configure(2) do |config|
+  
+  # Base box to use
+  config.vm.box = "ubuntu/xenial64"
+
+  #config.vm.hostname = hostname
+  config.vm.network "private_network", ip: ip
+
+  # config.vm.network "public_network"
+
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    vb.gui = true
+  
+    # Customize the amount of memory on the VM:
+    vb.memory = "2048"
+    
+    # Set video memory to a userful value
+    vb.customize [ "modifyvm", :id, "--vram", "128" ]
+    
+    # Disable uart so this works on WSL
+    # https://stackoverflow.com/questions/45773825/vagrant-with-virtualbox-on-wsl-verr-path-not-found
+    vb.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]
+  end
+
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    sudo apt-get update
+    sudo apt-get -y install winbind
+  SHELL
+end
+
+

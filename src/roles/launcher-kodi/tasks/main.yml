@@ -1,0 +1,35 @@
+
+- name: Install kodi-openbox
+  become: yes
+  become_method: sudo
+  shell: |
+    cd ~/
+    wget -O kodi-openbox-master.zip https://github.com/lufinkey/kodi-openbox/archive/master.zip
+    
+    apt-get -y install unzip
+    
+    unzip kodi-openbox-master.zip
+    
+    cd kodi-openbox-master
+    
+    apt-get -f -y install
+    
+    ./build.sh
+    
+    dpkg -i kodi-openbox.deb
+    
+    #clean up
+    cd ~/
+    rm -r kodi-openbox-master kodi-openbox-master.zip
+  args:
+    creates: /usr/bin/kodi-openbox-session
+
+- name: Install Kodi-Launches-EmulationStation
+  become: yes
+  become_method: sudo
+  copy:
+    src: script.kodi.launches.emulationstation
+    dest: /home/arcadia/.kodi/addons/
+    owner: arcadia
+    group: arcadia
+

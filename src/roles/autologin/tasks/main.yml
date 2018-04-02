@@ -1,0 +1,43 @@
+- name: Add user
+  become: yes
+  become_method: sudo
+  user:
+    name: arcadia
+    comment: Arcadia
+    groups: nopasswdlogin,cdrom,users,input,netdev
+
+- name: Remove Password
+  become: yes
+  become_method: sudo
+  shell: usermod --lock arcadia
+
+- name: Setup autologin
+  become: yes
+  become_method: sudo
+  copy:
+    content: |
+      [Seat:*]
+      autologin-user=arcadia
+      autologin-session=kodi-openbox
+    dest: /etc/lightdm/lightdm.conf.d/autologin.conf
+
+- name: Add ssh key
+  become: yes
+  become_method: sudo
+  authorized_key: 
+    user: arcadia
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+- name: Add arcadia to sudoers
+  become: yes
+  become_method: sudo
+  copy:
+    dest: /etc/sudoers.d/arcadia
+    content: |
+      arcadia ALL=(ALL) NOPASSWD: /sbin/shutdown, /sbin/reboot, /home/arcadia/RetroPie-Setup/retropie_setup.sh, /home/arcadia/RetroPie-Setup/retropie_packages.sh, /usr/bin/apt-get
+    mode: 0440
+    owner: root
+    group: root
+    validate: 'visudo -cf %s'
+

@@ -1,0 +1,17 @@
+---
+- name: Add XBMC ppa
+  become: yes
+  become_method: sudo
+  apt_repository:
+    repo: 'ppa:team-xbmc/ppa'
+
+- name: Install kodi system
+  become: yes
+  become_method: sudo
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - kodi
+    - kodi-peripheral-joystick

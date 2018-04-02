@@ -1,0 +1,17 @@
+
+- name: Get Retropie Script
+  git:
+    repo: 'https://github.com/RetroPie/RetroPie-Setup.git'
+    dest: /home/arcadia/RetroPie-Setup
+  become: yes
+  become_user: arcadia
+
+- name: Run RetroPie basic install
+  become: yes
+  become_user: arcadia
+  shell: |
+    sudo apt-get -fy install
+    sudo ./retropie_packages.sh setup basic_install
+  args:
+    chdir: /home/arcadia/RetroPie-Setup
+    creates: /usr/bin/emulationstation
